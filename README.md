@@ -35,3 +35,6 @@ terraform apply -auto-approve
 **Note:** `var.bucket_name` in `iac/variables.tf` must be changed to something
 globally unique before your first `apply` — S3 bucket names are unique across
 all of AWS, not just your account.
+
+## Deployment Status
+Deployed and verified via GitHub Actions release pipeline.
