@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bulletin Board</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      background: #f4f1ea;
+      color: #222;
+    }
+    h1 {
+      text-align: center;
+      border-bottom: 3px solid #8a5a2c;
+      padding-bottom: 10px;
+    }
+    #post-form {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    #post-input {
+      flex: 1;
+      padding: 8px;
+      font-size: 16px;
+    }
+    button {
+      padding: 8px 16px;
+      background: #8a5a2c;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #6e4722;
+    }
+    .note {
+      background: #fff8dc;
+      border: 1px solid #d8c98a;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      position: relative;
+    }
+    .note .meta {
+      font-size: 12px;
+      color: #777;
+      margin-top: 6px;
+    }
+    .note button.delete {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #b33;
+      padding: 2px 8px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>📌 Bulletin Board</h1>
+
+  <div id="post-form">
+    <input type="text" id="post-input" placeholder="Pin a new note..." />
+    <button onclick="addPost()">Post</button>
+  </div>
+
+  <div id="board"></div>
+
+  <script>
+    function loadPosts() {
+      return JSON.parse(localStorage.getItem('posts') || '[]');
+    }
+
+    function savePosts(posts) {
+      localStorage.setItem('posts', JSON.stringify(posts));
+    }
+
+    function renderBoard() {
+      const board = document.getElementById('board');
+      const posts = loadPosts();
+      board.innerHTML = '';
+      posts.forEach((post, index) => {
+        const div = document.createElement('div');
+        div.className = 'note';
+        div.innerHTML = `
+          <div>${post.text}</div>
+          <div class="meta">${post.timestamp}</div>
+          <button class="delete" onclick="deletePost(${index})">x</button>
+        `;
+        board.appendChild(div);
+      });
+    }
+
+    function addPost() {
+      const input = document.getElementById('post-input');
+      const text = input.value.trim();
+      if (!text) return;
+      const posts = loadPosts();
+      posts.unshift({ text, timestamp: new Date().toLocaleString() });
+      savePosts(posts);
+      input.value = '';
+      renderBoard();
+    }
+
+    function deletePost(index) {
+      const posts = loadPosts();
+      posts.splice(index, 1);
+      savePosts(posts);
+      renderBoard();
+    }
+
+    document.getElementById('post-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addPost();
+    });
+
+    renderBoard();
+  </script>
+</body>
+</html>
